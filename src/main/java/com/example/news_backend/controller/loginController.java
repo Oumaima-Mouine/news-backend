@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/api/admin")
 @CrossOrigin(origins = "http://localhost:3000") // Allow requests from React
-public class AdminController {
+public class loginController {
 
 
     @Autowired

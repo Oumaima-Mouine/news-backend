@@ -1,75 +1,105 @@
 package com.example.news_backend.model;
 
 import jakarta.persistence.*;
-
+import jakarta.validation.constraints.NotNull;
 
 @Entity
 public class News {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id_news;
+    private Long id;
 
-    @Column(nullable = false)
-    private String title_news ;
+    @Column(nullable = false, length = 255)
+    private String title;
 
-    @Column
-    private String content_news ;
+    @Column(nullable = false, columnDefinition = "TEXT")
+    private String content;
 
-    @Column
-    private String picture_news ;
+    @Column(length = 50)
+    private String category;
 
-    @Column
-    private String time_news ;
+    @Column(length = 255)
+    private String imageUrl;
 
-    @Column
-    private String location_news ;
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false, columnDefinition = "ENUM('PUBLISHED', 'DRAFT') DEFAULT 'DRAFT'")
+    private Status status = Status.DRAFT;
 
-    public long getId_news() {
-        return id_news;
+    @Column(nullable = false, columnDefinition = "INT DEFAULT 0")
+    private Integer views = 0;
+
+    @Column(nullable = false, columnDefinition = "DATETIME DEFAULT CURRENT_TIMESTAMP")
+    private java.sql.Timestamp publishDate;
+
+    // Enum for the status column
+    public enum Status {
+        PUBLISHED,
+        DRAFT
     }
 
-    public void setId_news(long id_news) {
-        this.id_news = id_news;
+    // Getters and Setters
+    public Long getId() {
+        return id;
     }
 
-    public String getTitle_news() {
-        return title_news;
+    public void setId(Long id) {
+        this.id = id;
     }
 
-    public void setTitle_news(String title_news) {
-        this.title_news = title_news;
+    public String getTitle() {
+        return title;
     }
 
-    public String getContent_news() {
-        return content_news;
+    public void setTitle(String title) {
+        this.title = title;
     }
 
-    public void setContent_news(String content_news) {
-        this.content_news = content_news;
+    public String getContent() {
+        return content;
     }
 
-    public String getPicture_news() {
-        return picture_news;
+    public void setContent(String content) {
+        this.content = content;
     }
 
-    public void setPicture_news(String picture_news) {
-        this.picture_news = picture_news;
+    public String getCategory() {
+        return category;
     }
 
-    public String getTime_news() {
-        return time_news;
+    public void setCategory(String category) {
+        this.category = category;
     }
 
-    public void setTime_news(String time_news) {
-        this.time_news = time_news;
+    public String getImageUrl() {
+        return imageUrl;
     }
 
-    public String getLocation_news() {
-        return location_news;
+    public void setImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
     }
 
-    public void setLocation_news(String location_news) {
-        this.location_news = location_news;
+    public Status getStatus() {
+        return status;
+    }
+
+    public void setStatus(Status status) {
+        this.status = status;
+    }
+
+    public Integer getViews() {
+        return views;
+    }
+
+    public void setViews(Integer views) {
+        this.views = views;
+    }
+
+    public java.sql.Timestamp getPublishDate() {
+        return publishDate;
+    }
+
+    public void setPublishDate(java.sql.Timestamp publishDate) {
+        this.publishDate = publishDate;
     }
 }

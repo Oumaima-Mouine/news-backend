@@ -1,6 +1,9 @@
 package com.example.news_backend.model;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
+
+enum Role { ADMIN, USER }
 
 @Entity
 public class User {
@@ -9,21 +12,26 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id_user;
 
-    @Column
+    @Column(nullable = false, unique = true)
     private String email;
 
-    @Column
+    @Column(nullable = false, unique = true)
     private String username;
 
-    @Column
+    @Column(nullable = false)
     private String password;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private Role role = Role.USER; // Set default value here
+
+    // Getters and Setters
+    public Long getId_user() {
+        return id_user;
+    }
 
     public void setId_user(Long idUser) {
         this.id_user = idUser;
-    }
-
-    public Long getId_user() {
-        return id_user;
     }
 
     public String getEmail() {
@@ -50,5 +58,11 @@ public class User {
         this.password = password;
     }
 
+    public Role getRole() {
+        return role;
+    }
 
+    public void setRole(Role role) {
+        this.role = role;
+    }
 }
