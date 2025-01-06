@@ -48,7 +48,7 @@ public class WebSecurityConfig {
         http
                 .csrf(csrf -> csrf.disable()) // Updated way to disable CSRF
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/news/**","api/event/**").permitAll() // Allow all requests to /api/news
+                        .requestMatchers("/api/news/**","api/event/**","/api/search").permitAll() // Allow all requests to /api/news
                         .anyRequest().authenticated());
 
 
