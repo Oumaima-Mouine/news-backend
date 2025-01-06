@@ -5,6 +5,7 @@ import com.example.news_backend.filters.JwtRequestFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
@@ -24,18 +25,32 @@ public class WebSecurityConfig {
     @Autowired
     private JwtRequestFilter authFilter;
 
+//    @Bean
+//    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+//        http
+//                .csrf(csrf -> csrf.disable()) // Disable CSRF for simplicity
+//                .authorizeHttpRequests(authorize -> authorize
+////                        .requestMatchers("/user", "/users", "/api/news/**").permitAll() // Permettre l'accès public à /api/news
+//                        .requestMatchers( "/api/news/**").permitAll() // Permettre l'accès public à /api/news
+//                        .anyRequest().authenticated() // Require authentication for /api/**
+//
+//                )
+//                .sessionManagement(session -> session
+//                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS) // Use stateless sessions
+//                )
+//                .addFilterBefore(authFilter, UsernamePasswordAuthenticationFilter.class); // Add JWT filter
+//
+//        return http.build();
+//    }
+
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-                .csrf(csrf -> csrf.disable()) // Disable CSRF for simplicity
-                .authorizeHttpRequests(authorize -> authorize
-                        .requestMatchers("/user","/users").permitAll() // Allow public access to /user
-                        .requestMatchers("/api/**").authenticated() // Require authentication for /api/**
-                )
-                .sessionManagement(session -> session
-                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS) // Use stateless sessions
-                )
-                .addFilterBefore(authFilter, UsernamePasswordAuthenticationFilter.class); // Add JWT filter
+                .csrf(csrf -> csrf.disable()) // Updated way to disable CSRF
+                .authorizeHttpRequests(auth -> auth
+                        .requestMatchers("/api/news/**","api/event/**").permitAll() // Allow all requests to /api/news
+                        .anyRequest().authenticated());
+
 
         return http.build();
     }

@@ -28,9 +28,8 @@ public class JwtRequestFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
-        // Skip filtering for /user endpoint
         String requestPath = request.getServletPath();
-        if ("/user".equals(requestPath)) {
+        if ("/user".equals(requestPath) || requestPath.startsWith("/api/news")) { // Skip filtering for /api/news/**
             filterChain.doFilter(request, response);
             return;
         }
@@ -42,7 +41,7 @@ public class JwtRequestFilter extends OncePerRequestFilter {
 
         if (authHeader != null && authHeader.startsWith("Bearer ")) {
             token = authHeader.substring(7);
-            username = jwtUtil.extractUsername(token); // Extract username from token
+            username = jwtUtil.extractUsername(token);
         }
 
         // Validate token and set authentication
@@ -60,6 +59,7 @@ public class JwtRequestFilter extends OncePerRequestFilter {
         // Continue the filter chain
         filterChain.doFilter(request, response);
     }
+
 }
 
 

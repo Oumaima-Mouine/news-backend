@@ -1,7 +1,7 @@
 package com.example.news_backend.model;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotNull;
+import java.sql.Timestamp;
 
 @Entity
 public class News {
@@ -23,19 +23,25 @@ public class News {
     private String imageUrl;
 
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false, columnDefinition = "ENUM('PUBLISHED', 'DRAFT') DEFAULT 'DRAFT'")
-    private Status status = Status.DRAFT;
+    @Column(nullable = false)
+    private Status status;
 
-    @Column(nullable = false, columnDefinition = "INT DEFAULT 0")
-    private Integer views = 0;
+    @Column(length = 255)
+    private String tags;
 
-    @Column(nullable = false, columnDefinition = "DATETIME DEFAULT CURRENT_TIMESTAMP")
-    private java.sql.Timestamp publishDate;
+    @Column(nullable = false, updatable = false)
+    private Timestamp publishDate;
 
     // Enum for the status column
     public enum Status {
         PUBLISHED,
         DRAFT
+    }
+
+    // Constructor
+    public News() {
+        this.status = Status.DRAFT; // Default status
+        this.publishDate = new Timestamp(System.currentTimeMillis()); // Default publishDate
     }
 
     // Getters and Setters
@@ -87,19 +93,19 @@ public class News {
         this.status = status;
     }
 
-    public Integer getViews() {
-        return views;
-    }
-
-    public void setViews(Integer views) {
-        this.views = views;
-    }
-
-    public java.sql.Timestamp getPublishDate() {
+    public Timestamp getPublishDate() {
         return publishDate;
     }
 
-    public void setPublishDate(java.sql.Timestamp publishDate) {
+    public void setPublishDate(Timestamp publishDate) {
         this.publishDate = publishDate;
+    }
+
+    public String getTags() {
+        return tags;
+    }
+
+    public void setTags(String tags) {
+        this.tags = tags;
     }
 }

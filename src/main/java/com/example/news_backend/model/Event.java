@@ -28,6 +28,10 @@ public class Event {
     @Column(length = 100)
     private String category;
 
+    @Column(nullable = false,length = 100)
+    private int capacity;
+
+
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, columnDefinition = "ENUM('UPCOMING', 'LIMITED_SEATS', 'OPEN') DEFAULT 'UPCOMING'")
     private Status status = Status.UPCOMING;
@@ -52,6 +56,14 @@ public class Event {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public int getCapacity() {
+        return capacity;
+    }
+
+    public void setCapacity(int capacity) {
+        this.capacity = capacity;
     }
 
     public String getTitle() {
