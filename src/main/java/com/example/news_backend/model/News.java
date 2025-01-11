@@ -19,6 +19,7 @@ public class News {
     @Column(length = 50)
     private String category;
 
+
     @Column(length = 255)
     private String imageUrl;
 

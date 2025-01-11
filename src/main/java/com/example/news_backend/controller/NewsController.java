@@ -2,18 +2,34 @@ package com.example.news_backend.controller;
 
 import com.example.news_backend.model.News;
 import com.example.news_backend.service.NewsService;
+import com.example.news_backend.service.FileStorageService;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.server.ResponseStatusException;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
 
 @RestController
+@CrossOrigin(origins = "http://localhost:3000")
 @RequestMapping("/api/news")
 public class NewsController {
 
     @Autowired
     private NewsService newsService;
+
+    @Autowired
+    private FileStorageService fileStorageService; // Correctly inject the service
 
     // Get all news items
     @GetMapping
@@ -42,7 +58,32 @@ public class NewsController {
 
     // Delete a news item
     @DeleteMapping("/{id}")
-    public void deleteNews(@PathVariable Long id) {
+    public ResponseEntity<?> deleteNews(@PathVariable Long id) {
         newsService.deleteNews(id);
+        return ResponseEntity.ok().build();
+    }
+
+    // Handle the image uploads
+    @PostMapping("/upload")
+    public ResponseEntity<String> handleImageUpload(@RequestParam("file") MultipartFile file) {
+        try {
+            String fileName = fileStorageService.saveFile(file);
+            return ResponseEntity.ok("File uploaded successfully: " + fileName);
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error: " + e.getMessage());
+        }
+    }
+
+    @GetMapping("/file/{fileName}")
+    public ResponseEntity<Object> getFile(@PathVariable String fileName) {
+        try {
+            Path filePath = fileStorageService.getFilePath(fileName);
+            if (!Files.exists(filePath)) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("File not found!");
+            }
+            return ResponseEntity.ok().body(Files.readAllBytes(filePath));
+        } catch (IOException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error: " + e.getMessage());
+        }
     }
 }
