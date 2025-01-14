@@ -1,6 +1,8 @@
 package com.example.news_backend.model;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Size;
+
 import java.sql.Timestamp;
 
 @Entity
@@ -20,7 +22,7 @@ public class News {
     private String category;
 
 
-    @Column(length = 255)
+    @Size(max = 255, message = "Image URL cannot exceed 255 characters")
     private String imageUrl;
 
     @Enumerated(EnumType.STRING)

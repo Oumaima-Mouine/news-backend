@@ -29,18 +29,22 @@ public class FileStorageService {
 
     public String saveFile(MultipartFile file) {
         try {
-            String fileName = file.getOriginalFilename();
-            if (fileName == null) {
+            String originalFileName = StringUtils.cleanPath(file.getOriginalFilename());
+            if (originalFileName == null) {
                 throw new RuntimeException("Invalid file name!");
             }
 
+            // Ensure the file name is unique
+            String fileName = System.currentTimeMillis() + "_" + originalFileName;
+
             Path targetLocation = this.storagePath.resolve(fileName);
-            Files.copy(file.getInputStream(), targetLocation);
+            Files.copy(file.getInputStream(), targetLocation, StandardCopyOption.REPLACE_EXISTING);
             return fileName;
         } catch (IOException e) {
             throw new RuntimeException("Could not store file. Error: " + e.getMessage());
         }
     }
+
 
     public Path getFilePath(String fileName) {
         return this.storagePath.resolve(fileName).normalize();

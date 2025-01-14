@@ -18,7 +18,9 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @CrossOrigin(origins = "http://localhost:3000")
@@ -65,14 +67,19 @@ public class NewsController {
 
     // Handle the image uploads
     @PostMapping("/upload")
-    public ResponseEntity<String> handleImageUpload(@RequestParam("file") MultipartFile file) {
+    public ResponseEntity<Map<String, String>> handleImageUpload(@RequestParam("file") MultipartFile file) {
         try {
             String fileName = fileStorageService.saveFile(file);
-            return ResponseEntity.ok("File uploaded successfully: " + fileName);
+            Map<String, String> response = new HashMap<>();
+            response.put("imageUrl", "/uploads/" + fileName); // Adjust the URL based on your application's needs
+            return ResponseEntity.ok(response);
         } catch (RuntimeException e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error: " + e.getMessage());
+            Map<String, String> errorResponse = new HashMap<>();
+            errorResponse.put("error", e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
         }
     }
+
 
     @GetMapping("/file/{fileName}")
     public ResponseEntity<Object> getFile(@PathVariable String fileName) {
