@@ -1,9 +1,6 @@
 package com.example.news_backend.model;
 
 import jakarta.persistence.*;
-
-enum Status{UPCOMING,LIMITED_SEATS,OPEN}
-
 @Entity
 public class Event {
     @Id
@@ -17,10 +14,10 @@ public class Event {
     private String description;
 
     @Column(nullable = false)
-    private java.sql.Date date;
+    private String date; // Change to String
 
     @Column(nullable = false)
-    private java.sql.Time time;
+    private String time; // Change to String
 
     @Column(length = 255)
     private String location;
@@ -28,9 +25,8 @@ public class Event {
     @Column(length = 100)
     private String category;
 
-    @Column(nullable = false,length = 100)
+    @Column(nullable = false, length = 100)
     private int capacity;
-
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, columnDefinition = "ENUM('UPCOMING', 'LIMITED_SEATS', 'OPEN') DEFAULT 'UPCOMING'")
@@ -38,9 +34,6 @@ public class Event {
 
     @Column(length = 255)
     private String imageUrl;
-
-    @Column(nullable = false, columnDefinition = "INT DEFAULT 0")
-    private Integer attendees = 0;
 
     // Enum for the status column
     public enum Status {
@@ -50,20 +43,13 @@ public class Event {
     }
 
     // Getters and Setters
+
     public Long getId() {
         return id;
     }
 
     public void setId(Long id) {
         this.id = id;
-    }
-
-    public int getCapacity() {
-        return capacity;
-    }
-
-    public void setCapacity(int capacity) {
-        this.capacity = capacity;
     }
 
     public String getTitle() {
@@ -82,19 +68,19 @@ public class Event {
         this.description = description;
     }
 
-    public java.sql.Date getDate() {
+    public String getDate() {
         return date;
     }
 
-    public void setDate(java.sql.Date date) {
+    public void setDate(String date) {
         this.date = date;
     }
 
-    public java.sql.Time getTime() {
+    public String getTime() {
         return time;
     }
 
-    public void setTime(java.sql.Time time) {
+    public void setTime(String time) {
         this.time = time;
     }
 
@@ -114,6 +100,14 @@ public class Event {
         this.category = category;
     }
 
+    public int getCapacity() {
+        return capacity;
+    }
+
+    public void setCapacity(int capacity) {
+        this.capacity = capacity;
+    }
+
     public Status getStatus() {
         return status;
     }
@@ -128,13 +122,5 @@ public class Event {
 
     public void setImageUrl(String imageUrl) {
         this.imageUrl = imageUrl;
-    }
-
-    public Integer getAttendees() {
-        return attendees;
-    }
-
-    public void setAttendees(Integer attendees) {
-        this.attendees = attendees;
     }
 }

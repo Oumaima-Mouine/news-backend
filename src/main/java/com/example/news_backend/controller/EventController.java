@@ -53,8 +53,12 @@ public class EventController  {
         }
     }
     @PutMapping("/{id}")
-    public Event updateEvent(@PathVariable Long id, @RequestBody Event event) {
-        return eventService.updateEvent(id, event);
+    public Event updateEvent(
+            @PathVariable Long id,
+            @ModelAttribute Event event,
+            @RequestPart(value = "image", required = false) MultipartFile image
+    ) {
+        return eventService.updateEvent(id, event, image);
     }
 
     @DeleteMapping("/{id}")
