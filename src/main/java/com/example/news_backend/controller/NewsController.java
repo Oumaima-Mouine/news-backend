@@ -18,6 +18,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.sql.Timestamp;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -54,9 +55,38 @@ public class NewsController {
     // Update a news item
     @PutMapping("/{id}")
     @PreAuthorize("permitAll()")
-    public News updateNews(@RequestBody News news, @PathVariable Long id) {
-        return newsService.updateNews(id, news);
+    public ResponseEntity<News> updateNews(
+            @PathVariable Long id,
+            @RequestParam("title") String title,
+            @RequestParam("author") String author,
+            @RequestParam("date") String date,
+            @RequestParam("category") String category,
+            @RequestParam("description") String description, // Correct name for description/content
+            @RequestParam("tags") String tags,
+            @RequestParam(value = "file", required = false) MultipartFile file
+    ) {
+        // Parse the date string into a Timestamp
+        Timestamp publishDate = Timestamp.valueOf(date);
+
+        News updatedNews = new News();
+        updatedNews.setTitle(title);
+        updatedNews.setPublishDate(publishDate);
+        updatedNews.setCategory(category);
+        updatedNews.setContent(description); // Set the content using description parameter
+        updatedNews.setTags(tags);
+
+        if (file != null) {
+            // Add your logic here to save the file and get the URL
+            // e.g., updatedNews.setImageUrl(uploadImage(file));
+        }
+
+        News updatedNewsResult = newsService.updateNews(id, updatedNews);
+        return new ResponseEntity<>(updatedNewsResult, HttpStatus.OK);
     }
+
+//    public News updateNews(@RequestBody News news, @PathVariable Long id) {
+//        return newsService.updateNews(id, news);
+//    }
 
     // Delete a news item
     @DeleteMapping("/{id}")
