@@ -27,7 +27,6 @@ public class EventService {
     public Event getEventById(Long id) {
         return eventRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Event not found with ID: " + id));
-
     }
 
     public Event createEvent(Event event) {
@@ -46,6 +45,9 @@ public class EventService {
         existingEvent.setCategory(updateEvent.getCategory());
         existingEvent.setStatus(updateEvent.getStatus());
         existingEvent.setCapacity(updateEvent.getCapacity());
+        existingEvent.setPrice(updateEvent.getPrice());
+        existingEvent.setOrganizer(updateEvent.getOrganizer());
+        existingEvent.setTags(updateEvent.getTags());
 
         // Handle the image upload
         if (image != null && !image.isEmpty()) {
@@ -55,12 +57,11 @@ public class EventService {
 
         return eventRepository.save(existingEvent);
     }
+
     public void deleteEvent(Long id) {
         if (!eventRepository.existsById(id)) {
             throw new RuntimeException("Event not found with ID: " + id);
         }
         eventRepository.deleteById(id);
     }
-
-
 }

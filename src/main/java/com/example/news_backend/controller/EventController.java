@@ -52,6 +52,7 @@ public class EventController  {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
         }
     }
+
     @PutMapping("/{id}")
     public Event updateEvent(
             @PathVariable Long id,

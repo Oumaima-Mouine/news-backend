@@ -1,6 +1,8 @@
 package com.example.news_backend.model;
 
 import jakarta.persistence.*;
+import java.util.List;
+
 @Entity
 public class Event {
     @Id
@@ -28,8 +30,17 @@ public class Event {
     @Column(nullable = false, length = 100)
     private int capacity;
 
+    @Column(nullable = false)
+    private double price; // Price of the event
+
+    @Column(length = 255)
+    private String organizer; // Organizer of the event
+
+    @ElementCollection
+    private List<String> tags; // List of tags associated with the event
+
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false, columnDefinition = "ENUM('UPCOMING', 'LIMITED_SEATS', 'OPEN') DEFAULT 'UPCOMING'")
+    @Column(nullable = false, columnDefinition = "ENUM('UPCOMING', 'LIMITED_SEATS', 'OPEN', 'COMPLETED') DEFAULT 'UPCOMING'")
     private Status status = Status.UPCOMING;
 
     @Column(length = 255)
@@ -39,7 +50,8 @@ public class Event {
     public enum Status {
         UPCOMING,
         LIMITED_SEATS,
-        OPEN
+        OPEN,
+        COMPLETED
     }
 
     // Getters and Setters
@@ -106,6 +118,30 @@ public class Event {
 
     public void setCapacity(int capacity) {
         this.capacity = capacity;
+    }
+
+    public double getPrice() {
+        return price;
+    }
+
+    public void setPrice(double price) {
+        this.price = price;
+    }
+
+    public String getOrganizer() {
+        return organizer;
+    }
+
+    public void setOrganizer(String organizer) {
+        this.organizer = organizer;
+    }
+
+    public List<String> getTags() {
+        return tags;
+    }
+
+    public void setTags(List<String> tags) {
+        this.tags = tags;
     }
 
     public Status getStatus() {

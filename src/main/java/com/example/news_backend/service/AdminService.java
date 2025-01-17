@@ -16,15 +16,13 @@ public class AdminService {
     private UserRepository adminRepository;
 
     private PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
-
     public boolean login(String email, String rawPassword) {
         Optional<User> admin = Optional.ofNullable(adminRepository.findFirstByEmail(email));
         if (admin.isPresent()) {
             String storedPasswordHash = admin.get().getPassword();
-            System.out.println("User found: " + admin.get().getEmail());
             System.out.println("Database Password Hash: " + storedPasswordHash);
 
-            // Compare the raw password with the encoded password
+            // Compare the raw password with the stored hash
             boolean passwordMatches = passwordEncoder.matches(rawPassword, storedPasswordHash);
             System.out.println("Password Matches: " + passwordMatches);
 
@@ -34,4 +32,5 @@ public class AdminService {
             return false;
         }
     }
+
 }
