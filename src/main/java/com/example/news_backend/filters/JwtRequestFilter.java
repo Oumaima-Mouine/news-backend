@@ -29,7 +29,9 @@ public class JwtRequestFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
         String requestPath = request.getServletPath();
-        if ("/user".equals(requestPath) || requestPath.startsWith("/api/news")) { // Skip filtering for /api/news/**
+
+        // Skip filtering for /api/login, /user, and /api/news
+        if ("/api/login".equals(requestPath) || "/user".equals(requestPath) || requestPath.startsWith("/api/news")) {
             filterChain.doFilter(request, response);
             return;
         }

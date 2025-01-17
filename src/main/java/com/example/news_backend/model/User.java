@@ -1,7 +1,6 @@
 package com.example.news_backend.model;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotNull;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 enum Role { ADMIN, USER }
@@ -25,6 +24,16 @@ public class User {
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private Role role = Role.USER; // Set default value here
+
+    public User(String email, String password, String username) {
+        this.email = email;
+        this.password = password;
+        this.username = username;
+    }
+
+    public User() {
+
+    }
 
     // Getters and Setters
     public Long getId_user() {
@@ -55,6 +64,10 @@ public class User {
         return password;
     }
 
+    public void setPassword(String password) {
+        BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
+        this.password = encoder.encode(password);
+    }
 
     public Role getRole() {
         return role;
@@ -62,12 +75,6 @@ public class User {
 
     public void setRole(Role role) {
         this.role = role;
-    }
-
-    // Hash the password before saving
-    public void setPassword(String password) {
-        BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
-        this.password = encoder.encode(password);
     }
 
     // Check if the provided password matches the hashed password
