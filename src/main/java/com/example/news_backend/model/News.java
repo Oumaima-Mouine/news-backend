@@ -42,14 +42,25 @@ public class News {
         PUBLISHED,
         DRAFT
     }
+    @Column(length = 100)
+    private String author; // Add this field
 
-    // Constructor
+    // Update the constructor to include the author field
     public News() {
         this.status = Status.DRAFT; // Default status
         this.publishDate = new Timestamp(System.currentTimeMillis()); // Default publishDate
         this.readTime = "5 min read"; // Default read time
+        this.author = "Anonymous"; // Default author
     }
 
+    // Add getter and setter for the author field
+    public String getAuthor() {
+        return author;
+    }
+
+    public void setAuthor(String author) {
+        this.author = author;
+    }
     // Getters and Setters
     public Long getId() {
         return id;

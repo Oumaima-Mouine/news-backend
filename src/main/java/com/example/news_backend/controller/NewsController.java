@@ -9,7 +9,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.sql.Timestamp;
@@ -52,6 +51,7 @@ public class NewsController {
         response.put("date", formattedDate); // Formatted date
         response.put("readTime", news.getReadTime()); // Read time
         response.put("tags", news.getTags());
+        response.put("author", news.getAuthor()); // Include author in the response
 
         return ResponseEntity.ok(response);
     }
@@ -66,7 +66,7 @@ public class NewsController {
     @PutMapping("/{id}")
     public ResponseEntity<News> updateNews(
             @PathVariable Long id,
-            @RequestPart("news") News updatedNews,
+            @RequestPart("news") News updatedNews, // Expects a part named "news"
             @RequestPart(value = "image", required = false) MultipartFile image
     ) {
         News updatedNewsResult = newsService.updateNews(id, updatedNews, image);
@@ -104,7 +104,7 @@ public class NewsController {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body("File not found!");
             }
             return ResponseEntity.ok().body(Files.readAllBytes(filePath));
-        } catch (IOException e) {
+        } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error: " + e.getMessage());
         }
     }

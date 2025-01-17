@@ -11,8 +11,6 @@ import org.springframework.web.server.ResponseStatusException;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.List;
-import java.util.Map;
-import java.util.HashMap;
 
 @Service
 public class NewsService {
@@ -42,6 +40,9 @@ public class NewsService {
         if (news.getReadTime() == null) {
             news.setReadTime("5 min read"); // Set default read time
         }
+        if (news.getAuthor() == null) {
+            news.setAuthor("Anonymous"); // Set default author
+        }
         return newsRepository.save(news);
     }
 
@@ -56,6 +57,7 @@ public class NewsService {
             existingNews.setCategory(updatedNews.getCategory());
             existingNews.setTags(updatedNews.getTags());
             existingNews.setStatus(updatedNews.getStatus());
+            existingNews.setAuthor(updatedNews.getAuthor()); // Update author
 
             // Handle image upload
             if (image != null && !image.isEmpty()) {
