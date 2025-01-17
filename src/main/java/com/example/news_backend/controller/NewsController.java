@@ -3,21 +3,15 @@ package com.example.news_backend.controller;
 import com.example.news_backend.model.News;
 import com.example.news_backend.service.NewsService;
 import com.example.news_backend.service.FileStorageService;
-
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.server.ResponseStatusException;
 
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.sql.Timestamp;
 import java.util.HashMap;
 import java.util.List;
@@ -32,7 +26,7 @@ public class NewsController {
     private NewsService newsService;
 
     @Autowired
-    private FileStorageService fileStorageService; // Correctly inject the service
+    private FileStorageService fileStorageService;
 
     // Get all news items
     @GetMapping
@@ -42,8 +36,24 @@ public class NewsController {
 
     // Get a specific news item by ID
     @GetMapping("/{id}")
-    public News getNewsById(@PathVariable Long id) {
-        return newsService.getNewsById(id);
+    public ResponseEntity<Map<String, Object>> getNewsById(@PathVariable Long id) {
+        News news = newsService.getNewsById(id);
+
+        // Format the publishDate as a String
+        String formattedDate = newsService.formatPublishDate(news.getPublishDate());
+
+        // Create a response object
+        Map<String, Object> response = new HashMap<>();
+        response.put("id", news.getId());
+        response.put("title", news.getTitle());
+        response.put("content", news.getContent());
+        response.put("category", news.getCategory());
+        response.put("imageUrl", news.getImageUrl());
+        response.put("date", formattedDate); // Formatted date
+        response.put("readTime", news.getReadTime()); // Read time
+        response.put("tags", news.getTags());
+
+        return ResponseEntity.ok(response);
     }
 
     // Create a new news item
@@ -54,39 +64,14 @@ public class NewsController {
 
     // Update a news item
     @PutMapping("/{id}")
-    @PreAuthorize("permitAll()")
     public ResponseEntity<News> updateNews(
             @PathVariable Long id,
-            @RequestParam("title") String title,
-            @RequestParam("author") String author,
-            @RequestParam("date") String date,
-            @RequestParam("category") String category,
-            @RequestParam("description") String description, // Correct name for description/content
-            @RequestParam("tags") String tags,
-            @RequestParam(value = "file", required = false) MultipartFile file
+            @RequestPart("news") News updatedNews,
+            @RequestPart(value = "image", required = false) MultipartFile image
     ) {
-        // Parse the date string into a Timestamp
-        Timestamp publishDate = Timestamp.valueOf(date);
-
-        News updatedNews = new News();
-        updatedNews.setTitle(title);
-        updatedNews.setPublishDate(publishDate);
-        updatedNews.setCategory(category);
-        updatedNews.setContent(description); // Set the content using description parameter
-        updatedNews.setTags(tags);
-
-        if (file != null) {
-            // Add your logic here to save the file and get the URL
-            // e.g., updatedNews.setImageUrl(uploadImage(file));
-        }
-
-        News updatedNewsResult = newsService.updateNews(id, updatedNews);
+        News updatedNewsResult = newsService.updateNews(id, updatedNews, image);
         return new ResponseEntity<>(updatedNewsResult, HttpStatus.OK);
     }
-
-//    public News updateNews(@RequestBody News news, @PathVariable Long id) {
-//        return newsService.updateNews(id, news);
-//    }
 
     // Delete a news item
     @DeleteMapping("/{id}")
@@ -110,7 +95,7 @@ public class NewsController {
         }
     }
 
-
+    // Serve uploaded files
     @GetMapping("/file/{fileName}")
     public ResponseEntity<Object> getFile(@PathVariable String fileName) {
         try {

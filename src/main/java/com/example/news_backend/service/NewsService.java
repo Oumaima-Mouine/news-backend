@@ -5,15 +5,23 @@ import com.example.news_backend.repository.NewsRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
 import java.util.List;
+import java.util.Map;
+import java.util.HashMap;
+
 @Service
 public class NewsService {
 
     @Autowired
     private NewsRepository newsRepository;
+
+    @Autowired
+    private FileStorageService fileStorageService;
 
     // Get all news items
     public List<News> getAllNews() {
@@ -29,26 +37,31 @@ public class NewsService {
     // Create a new news item
     public News createNews(News news) {
         if (news.getPublishDate() == null) {
-            throw new IllegalArgumentException("Publish date cannot be null."); // Ensure publish date is provided
+            news.setPublishDate(new Timestamp(System.currentTimeMillis())); // Set default publish date
+        }
+        if (news.getReadTime() == null) {
+            news.setReadTime("5 min read"); // Set default read time
         }
         return newsRepository.save(news);
     }
 
-    public News updateNews(Long id, News updatedNews) {
+    // Update a news item
+    public News updateNews(Long id, News updatedNews, MultipartFile image) {
         try {
             News existingNews = getNewsById(id);
 
-            if (updatedNews.getContent() == null) {
-                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Content field cannot be null");
-            }
-
+            // Update fields
             existingNews.setTitle(updatedNews.getTitle());
             existingNews.setContent(updatedNews.getContent());
             existingNews.setCategory(updatedNews.getCategory());
-            existingNews.setImageUrl(updatedNews.getImageUrl());
-            existingNews.setStatus(updatedNews.getStatus());
             existingNews.setTags(updatedNews.getTags());
-            existingNews.setPublishDate(updatedNews.getPublishDate()); // Allow updating the publishing date
+            existingNews.setStatus(updatedNews.getStatus());
+
+            // Handle image upload
+            if (image != null && !image.isEmpty()) {
+                String fileName = fileStorageService.saveFile(image);
+                existingNews.setImageUrl("/uploads/" + fileName); // Update the image URL
+            }
 
             return newsRepository.save(existingNews);
         } catch (Exception e) {
@@ -58,13 +71,16 @@ public class NewsService {
         }
     }
 
-
-
     // Delete a news item
     public void deleteNews(Long id) {
         if (!newsRepository.existsById(id)) {
             throw new RuntimeException("News not found with ID: " + id);
         }
         newsRepository.deleteById(id);
+    }
+
+    // Format publishDate as a String
+    public String formatPublishDate(Timestamp publishDate) {
+        return new SimpleDateFormat("MMMM dd, yyyy").format(publishDate);
     }
 }

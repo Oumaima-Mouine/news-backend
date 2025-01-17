@@ -21,7 +21,6 @@ public class News {
     @Column(length = 50)
     private String category;
 
-
     @Size(max = 255, message = "Image URL cannot exceed 255 characters")
     private String imageUrl;
 
@@ -35,6 +34,9 @@ public class News {
     @Column(nullable = false, updatable = false)
     private Timestamp publishDate;
 
+    @Column(length = 50)
+    private String readTime; // New field for read time
+
     // Enum for the status column
     public enum Status {
         PUBLISHED,
@@ -45,6 +47,7 @@ public class News {
     public News() {
         this.status = Status.DRAFT; // Default status
         this.publishDate = new Timestamp(System.currentTimeMillis()); // Default publishDate
+        this.readTime = "5 min read"; // Default read time
     }
 
     // Getters and Setters
@@ -110,5 +113,13 @@ public class News {
 
     public void setTags(String tags) {
         this.tags = tags;
+    }
+
+    public String getReadTime() {
+        return readTime;
+    }
+
+    public void setReadTime(String readTime) {
+        this.readTime = readTime;
     }
 }

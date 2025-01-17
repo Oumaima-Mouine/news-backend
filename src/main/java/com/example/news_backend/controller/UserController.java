@@ -1,27 +1,20 @@
 package com.example.news_backend.controller;
 
 import com.example.news_backend.model.User;
-import com.example.news_backend.repository.UserRepository;
+import com.example.news_backend.service.AdminService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-
 @RestController
-//@CrossOrigin(origins = "http://localhost:3000")
+@CrossOrigin(origins = "http://localhost:3000")
+@RequestMapping("/api")
 public class UserController {
 
     @Autowired
-    private UserRepository userRepository;
+    private AdminService adminService;
 
-    @PostMapping("/user")
-    User newUser(@RequestBody User user) {
-        return userRepository.save(user);
-    }
-
-    @GetMapping("/users")
-    List<User> getAllUsers() {
-        return userRepository.findAll();
+    @PostMapping("/login")
+    public boolean login(@RequestBody User user) {
+        return adminService.login(user.getEmail(), user.getPassword());
     }
 }
-
