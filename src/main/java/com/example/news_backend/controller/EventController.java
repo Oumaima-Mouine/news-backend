@@ -24,9 +24,12 @@ public class EventController  {
     private EventService eventService;
 
     @GetMapping
-    public List<Event> getAllEvents() {
-        return eventService.getAllEvents();
+    public ResponseEntity<List<Event>> getAllEvents() {
+        List<Event> events = eventService.getAllEvents();
+        events.forEach(event -> System.out.println(event.getImageUrl())); // Log the imageUrl path
+        return ResponseEntity.ok(events);
     }
+
 
     @GetMapping("/{id}")
     public Event getEventById(@PathVariable Long id) {

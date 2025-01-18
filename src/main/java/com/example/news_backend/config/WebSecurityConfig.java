@@ -28,7 +28,7 @@ public class WebSecurityConfig {
         http
                 .csrf(csrf -> csrf.disable()) // Disable CSRF
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/login", "/api/news/**", "/api/event/**", "/api/search", "/uploads/**").permitAll() // Allow /api/login
+                        .requestMatchers("/", "/api/login", "/api/news/**", "/api/event/**", "/api/search", "/uploads/**").permitAll() // Allow root URL
                         .anyRequest().authenticated())
                 .sessionManagement(session -> session
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS)) // Use stateless sessions
@@ -36,6 +36,7 @@ public class WebSecurityConfig {
 
         return http.build();
     }
+
 
     @Bean
     public PasswordEncoder passwordEncoder() {
